@@ -1,4 +1,6 @@
 #library(qboxplot)
+library(scales)
+library(xtable)
 
 data <- read.csv("WinterGames.csv")
 data <- data[,-1]
@@ -18,9 +20,20 @@ summary(data)
 #                                    3rd Qu.:1996   3rd Qu.:29.00
 #                                    Max.   :2005   Max.   :45.00
 
-par(mfrow=c(1,2))
-boxplot(data$age[data$discipline=="Ski"], range=0, qtype=2)
-boxplot(data$age[data$discipline=="Snowboard"], range=0, qtype=2)
+
+#### Deskriptive Analyse ###########################################
+
+hist(data[data$discipline== "Ski",]$age, 27,xlim=c(15,45),
+     col = "darkgrey", freq=F, main = "", xlab="Alter in Jahren",
+     ylab = "rel. Häufigkeit", cex.axis = 1.5,
+     cex.lab = 1.5)
+hist(data[data$discipline== "Snowboard",]$age, 27, xlim=c(15,45),
+     add = T, col= alpha("blue", 0.2), freq=F, cex.axis = 1.5,
+     cex.lab = 1.5)
+legend("topright",legend = c("Ski", "Snowboard"), 
+       col = c("darkgrey",alpha("blue", 0.2)),
+       lwd = 5, cex = 1.2, bty = 'n', inset = -0.2) 
+
 
 mean(data$age[data$discipline=="Ski"], range=0, qtype=2)
 # [1] 25.0805
@@ -89,47 +102,79 @@ c(dim(snow_f_2014)[1], dim(snow_f_2018)[1], dim(snow_f_2022)[1],
 # [1] 32 31 31 32 32 32
 
 # immer 32 Snowboarder, bei 31 vermutlich kurzfristige Ausfälle
-dim(ski_f_2014)[1]
 
 c(dim(ski_f_2014)[1], dim(ski_f_2018)[1], dim(ski_f_2022)[1],
   dim(ski_m_2014)[1], dim(ski_m_2018)[1], dim(ski_m_2022)[1])
 # [1]  89  81  82 108 110  89
 
-# man darf auch N(0,1) anstelle von t-Verteilung nutzen
 
-# Frauen Dichte
-par(mfrow = c(2,3))
-plot(table(ski_f_2014$age), xlim=c(17, 45))
-plot(table(ski_f_2018$age), xlim=c(17, 45))
-plot(table(ski_f_2022$age), xlim=c(17, 45))
 
-plot(table(snow_f_2014$age), xlim=c(17, 45))
-plot(table(snow_f_2018$age), xlim=c(17, 45))
-plot(table(snow_f_2022$age), xlim=c(17, 45))
+Anzahl<- rbind(Snowboarder = c(dim(snow_f_2014)[1], dim(snow_f_2018)[1],
+                               dim(snow_f_2022)[1], dim(snow_m_2014)[1],
+                               dim(snow_m_2018)[1], dim(snow_m_2022)[1]),
+               Skifahrer =  c(dim(ski_f_2014)[1], dim(ski_f_2018)[1],
+                              dim(ski_f_2022)[1], dim(ski_m_2014)[1], 
+                              dim(ski_m_2018)[1], dim(ski_m_2022)[1]))
+
+xtable(Anzahl)
+
+#### Statistische Tests ############################################
+
+# da stetig ist N-Verteilung eh unpassend
+
+# Ski Dichte
+par(mfrow = c(2,3), mar = c(5.1, 4.6, 4.1, 2.1))
+plot(table(ski_f_2014$age), xlim=c(17, 45), main = "Frauen 2014",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(ski_f_2018$age), xlim=c(17, 45), main = "Frauen 2018",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(ski_f_2022$age), xlim=c(17, 45), main = "Frauen 2022",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+
+plot(table(ski_m_2014$age), xlim=c(17, 45), main = "Männer 2014",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(ski_m_2018$age), xlim=c(17, 45), main = "Männer 2018",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(ski_m_2022$age), xlim=c(17, 45), main = "Männer 2022",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+
+mtext("Skifahrer", side = 3, line = - 1.5, outer = TRUE, cex = 1.4)
+
+# Snowboard Dichte
+plot(table(snow_f_2014$age), xlim=c(17, 45), main = "Frauen 2014",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(snow_f_2018$age), xlim=c(17, 45), main = "Frauen 2018",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(snow_f_2022$age), xlim=c(17, 45), main = "Frauen 2022",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+
+plot(table(snow_m_2014$age), xlim=c(17, 45), main = "Männer 2014",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(snow_m_2018$age), xlim=c(17, 45), main = "Männer 2018",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+plot(table(snow_m_2022$age), xlim=c(17, 45), main = "Männer 2022",
+     xlab = "Alter in Jahren", ylab = "abs. Häufigkeit",
+     cex.axis = 2, cex.lab = 2, cex.main = 2)
+
+mtext("Snowboardfahrer", side = 3, line = - 1.5, outer = TRUE,  cex = 1.4)
+
 # sieht nicht nach Normalverteilung aus
 
-# Männer Dichte
-plot(table(ski_m_2014$age), xlim=c(17, 45))
-plot(table(ski_m_2018$age), xlim=c(17, 45))
-plot(table(ski_m_2022$age), xlim=c(17, 45))
-
-plot(table(snow_m_2014$age), xlim=c(17, 45))
-plot(table(snow_m_2018$age), xlim=c(17, 45))
-plot(table(snow_m_2022$age), xlim=c(17, 45))
-
-########
-par("oma")
-# [1] 0 0 0 0
-par("mar")
-# [1] 5.1 4.1 4.1 2.1
-par("fig")
-# [1] 0 1 0 1
-par("xpd")
-# [1] FALSE
 ########
 
 # auf die y-Achse kumulierte Wahrscheinlichkeit?
-par(mfrow = c(2,3), oma = c(3, 0, 0, 0))
+par(mfrow = c(2,3), oma = c(3, 0, 0, 0), mar = c(5.1, 4.6, 4.1, 2.1))
 plot.ecdf(ski_f_2014$ag, xlab="Alter in Jahren", 
           cex.axis = 1.6, cex.lab = 1.6, , cex.main=1.8,
           ylab = "Verteilungsfunktion", main = "Olympiade Frauen 2014")
@@ -162,18 +207,19 @@ plot.ecdf(ski_m_2022$age, xlab="Alter in Jahren",
           ylab = "Verteilungsfunktion", main = "Olympiade Männer 2022")
 plot.ecdf(snow_m_2022$age, add=T, col="blue")
 
-# legend(-50.14725,-0.909555 ,legend = c("Ski", "Snowboard"), 
-#        col = c("black","blue"),
-#        lwd = 5, horiz = TRUE, cex = 1,  xpd="NA",  bty = 'n')
 legend(-30.14725,-0.409555 ,legend = c("Ski", "Snowboard"), 
        col = c("black","blue"),
        lwd = 5, horiz = TRUE, cex = 1.5,  xpd="NA",  bty = 'n')
 
-##### Wilcoxon Test
-wilcox.test(ski_f_2014$age, snow_f_2014$age, "greater", correct = F)
-wilcox.test(ski_f_2018$age, snow_f_2018$age, "greater", correct = F)
-wilcox.test(ski_f_2022$age, snow_f_2022$age, "greater", correct = F)
 
-wilcox.test(ski_m_2014$age, snow_m_2014$age, "greater", correct = F)
-wilcox.test(ski_m_2018$age, snow_m_2018$age, "greater", correct = F)
-wilcox.test(ski_m_2022$age, snow_m_2022$age, "greater", correct = F)
+##### Wilcoxon Test
+# Bonferroni-Korrektur des Niveaus
+alpha<- 0.05
+niveau<-1-(alpha/6)
+wilcox.test(ski_f_2014$age, snow_f_2014$age, "greater", correct = F, conf.level= niveau)
+wilcox.test(ski_f_2018$age, snow_f_2018$age, "greater", correct = F, conf.level= niveau)
+wilcox.test(ski_f_2022$age, snow_f_2022$age, "greater", correct = F, conf.level= niveau)
+
+wilcox.test(ski_m_2014$age, snow_m_2014$age, "greater", correct = F, conf.level= niveau)
+wilcox.test(ski_m_2018$age, snow_m_2018$age, "greater", correct = F, conf.level= niveau)
+wilcox.test(ski_m_2022$age, snow_m_2022$age, "greater", correct = F, conf.level= niveau)
