@@ -118,6 +118,47 @@ Anzahl<- rbind(Snowboarder = c(dim(snow_f_2014)[1], dim(snow_f_2018)[1],
 
 xtable(Anzahl)
 
+#### Snowboard
+insgesamt<- quantile(data$age[data$discipline == "Snowboard"],
+                     c(0,0.25,0.5,0.75,1))
+weiblich2014<- quantile(snow_f_2014$age,c(0,0.25,0.5,0.75,1))
+weiblich2018<- quantile(snow_f_2018$age,c(0,0.25,0.5,0.75,1))
+weiblich2022<- quantile(snow_f_2022$age,c(0,0.25,0.5,0.75,1))
+
+männlich2014<- quantile(snow_m_2014$age, c(0,0.25,0.5,0.75,1))
+männlich2018<- quantile(snow_m_2018$age, c(0,0.25,0.5,0.75,1))
+männlich2022<- quantile(snow_m_2022$age, c(0,0.25,0.5,0.75,1))
+datenSnow<-rbind(insgesamt, 
+                 "Frauen 2014" = weiblich2014,
+                 "Frauen 2018" = weiblich2018, 
+                 "Frauen 2022" = weiblich2022,
+                 "Männer 2014" = männlich2014, 
+                 "Männer 2018" = männlich2018, 
+                 "Männer 2022" = männlich2022)
+
+xtable(datenSnow)
+
+#### Ski
+insgesamt2<- quantile(data$age[data$discipline == "Ski"],
+                      c(0,0.25,0.5,0.75,1))
+weiblich2014<- quantile(ski_f_2014$age,c(0,0.25,0.5,0.75,1))
+weiblich2018<- quantile(ski_f_2018$age,c(0,0.25,0.5,0.75,1))
+weiblich2022<- quantile(ski_f_2022$age,c(0,0.25,0.5,0.75,1))
+
+männlich2014<- quantile(ski_m_2014$age, c(0,0.25,0.5,0.75,1))
+männlich2018<- quantile(ski_m_2018$age, c(0,0.25,0.5,0.75,1))
+männlich2022<- quantile(ski_m_2022$age, c(0,0.25,0.5,0.75,1))
+
+datenSki<-rbind("insgesamt" = insgesamt2, 
+                "Frauen 2014" = weiblich2014 ,
+                "Frauen 2018" = weiblich2018, 
+                "Frauen 2022" = weiblich2022,
+                "Männer 2014" = männlich2014,
+                "Männer 2018" = männlich2018, 
+                "Männer 2022" = männlich2022)
+
+xtable(datenSki)
+
 #### Statistische Tests ############################################
 
 # da stetig ist N-Verteilung eh unpassend
@@ -214,8 +255,7 @@ legend(-30.14725,-0.409555 ,legend = c("Ski", "Snowboard"),
 
 ##### Wilcoxon Test
 # Bonferroni-Korrektur des Niveaus
-alpha<- 0.05
-niveau<-1-(alpha/6)
+niveau<-1-(0.05/6)
 wilcox.test(ski_f_2014$age, snow_f_2014$age, "greater", correct = F, conf.level= niveau)
 wilcox.test(ski_f_2018$age, snow_f_2018$age, "greater", correct = F, conf.level= niveau)
 wilcox.test(ski_f_2022$age, snow_f_2022$age, "greater", correct = F, conf.level= niveau)
@@ -223,3 +263,33 @@ wilcox.test(ski_f_2022$age, snow_f_2022$age, "greater", correct = F, conf.level=
 wilcox.test(ski_m_2014$age, snow_m_2014$age, "greater", correct = F, conf.level= niveau)
 wilcox.test(ski_m_2018$age, snow_m_2018$age, "greater", correct = F, conf.level= niveau)
 wilcox.test(ski_m_2022$age, snow_m_2022$age, "greater", correct = F, conf.level= niveau)
+
+
+### Test selbst implementieren
+# n1= 89, n2 = 32
+sum(rank(c(ski_f_2014$age, snow_f_2014$age))[1:89])
+# [1] 5111 # Wn1,n2
+(5111 - 1/2*(89+32+1))/sqrt((89*32*(89+32+1))/12)
+# [1] 29.67783
+
+wtest <- function(x,y){
+  n1 <- length(x)
+  n2 <- length(y)
+  w <- sum(rank(c(x,y))[1:n1])
+  (w - 1/2*(n1+n2+1))/sqrt((n1*n2*(n1+n2+1))/12)
+}
+qnorm(niveau)
+# [1] 2.39398
+
+c(wtest(ski_f_2014$age, snow_f_2014$age),
+  wtest(ski_f_2018$age, snow_f_2018$age),
+  wtest(ski_f_2022$age, snow_f_2022$age),
+  wtest(ski_m_2014$age, snow_m_2014$age),
+  wtest(ski_m_2018$age, snow_m_2018$age),
+  wtest(ski_m_2022$age, snow_m_2022$age))
+pnorm(c(wtest(ski_f_2014$age, snow_f_2014$age),
+        wtest(ski_f_2018$age, snow_f_2018$age),
+        wtest(ski_f_2022$age, snow_f_2022$age),
+        wtest(ski_m_2014$age, snow_m_2014$age),
+        wtest(ski_m_2018$age, snow_m_2018$age),
+        wtest(ski_m_2022$age, snow_m_2022$age)))
