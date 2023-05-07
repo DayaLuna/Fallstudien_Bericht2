@@ -278,8 +278,8 @@ wtest <- function(x,y){
   w <- sum(rank(c(x,y))[1:n1])
   (w - 1/2*(n1+n2+1))/sqrt((n1*n2*(n1+n2+1))/12)
 }
-qnorm(niveau)
-# [1] 2.39398
+qnorm(1-niveau)
+# [1] -2.39398
 
 c(wtest(ski_f_2014$age, snow_f_2014$age),
   wtest(ski_f_2018$age, snow_f_2018$age),
